@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+Flask-Bcrypt
+Flask-JWT-Extended
+Flask-Migrate
+PyJWT
+bcrypt
+PyMySQL
+Flask-Mail
+cryptography
+python-dotenv

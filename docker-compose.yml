@@ -14,6 +14,9 @@ services:
       MAIL_SERVER: smtp
       MAIL_PORT: 1025
       SQLALCHEMY_DATABASE_URI: mysql+pymysql://root:root@mysql:3306/bankingapp
+      
+    volumes:
+      - ./app:/app
     networks:
       - finservice_network
     restart: always
@@ -32,7 +35,7 @@ services:
     
   smtp:
     image: mailhog/mailhog
-    container_name: smtp
+    container_name: smtp-1
     ports:
       - "1025:1025"  # MailHog SMTP port
       - "8025:8025"  # MailHog Web interface for viewing mails
