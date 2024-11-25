@@ -60,5 +60,11 @@ class Transaction(db.Model):
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     fraud = db.Column(db.Boolean)
 
-
     user = db.relationship("User", back_populates="transactions")
+
+
+class RevokedToken(db.Model):
+    __tablename__ = "revoked_tokens"
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(500), unique=True, nullable=True)
+    revoked_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
