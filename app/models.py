@@ -70,3 +70,33 @@ class RevokedToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(500), unique=True, nullable=True)
     revoked_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class ExchangeFee(db.Model):
+    __tablename__ = "exchange_fees"
+
+    id = db.Column(db.Integer, primary_key=True)
+    currency_from = db.Column(db.String(3), nullable=False)
+    currency_to = db.Column(db.String(3), nullable=False)
+    fee = db.Column(db.Float, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "currency_from", "currency_to", name="uix_currency_pair_fees"
+        ),
+    )
+
+
+class ExchangeRate(db.Model):
+    __tablename__ = "exchange_rates"
+
+    id = db.Column(db.Integer, primary_key=True)
+    currency_from = db.Column(db.String(3), nullable=False)
+    currency_to = db.Column(db.String(3), nullable=False)
+    rate = db.Column(db.Float, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "currency_from", "currency_to", name="uix_currency_pair_rates"
+        ),
+    )
