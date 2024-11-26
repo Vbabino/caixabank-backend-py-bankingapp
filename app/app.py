@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
 )
+from sqlalchemy import func
 
 from app.models import *
 from dotenv import load_dotenv
@@ -115,7 +116,6 @@ def login():
     return jsonify({"token": access_token}), 200
 
 
-
 @app.route("/api/users/logout", methods=["POST"])
 @jwt_required()
 def logout():
@@ -175,6 +175,7 @@ def recurring_expenses():
             start_date=start_date,
         )
 
+        # Add new recurring expense to databae
         db.session.add(new_recurring_expense)
         db.session.commit()
 
@@ -199,6 +200,196 @@ def recurring_expenses():
     except Exception as e:
         print("Error:", repr(e))
         return jsonify({"msg": "Internal Server Error"}), 500
+
+
+@app.route("/api/recurring-expenses", methods=["GET"])
+@jwt_required()
+def get_recurring_expenses():
+    try:
+        # Check if token has been revoked
+        jti = get_jwt()["jti"]
+
+        if is_token_revoked(jti):
+            return jsonify({"message": "Session has expired"}), 401
+
+        user_id = get_jwt_identity()
+
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+
+        expenses_list = [
+            {
+                "id": expense.id,
+                "expense_name": expense.expense_name,
+                "amount": expense.amount,
+                "frequency": expense.frequency,
+                "start_date": expense.start_date.strftime("%Y-%m-%d"),
+            }
+            for expense in user.recurring_expense
+        ]
+
+        return (
+            jsonify({"recurring_expenses": expenses_list}),
+            200,
+        )
+
+    except Exception as e:
+        print("Error:", repr(e))
+        return jsonify({"msg": "Internal Server Error"}), 500
+
+
+@app.route("/api/recurring-expenses/projection", methods=["GET"])
+@jwt_required()
+def monthly_expenses():
+    try:
+        # Check if token has been revoked
+        jti = get_jwt()["jti"]
+
+        if is_token_revoked(jti):
+            return jsonify({"message": "Session has expired"}), 401
+
+        user_id = get_jwt_identity()
+
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+
+        # Group expenses by year and month, summing the amounts
+        monthly_expenses = (
+            db.session.query(
+                func.date_format(RecurringExpense.start_date, "%Y-%m").label("month"),
+                func.sum(RecurringExpense.amount).label("total_amount"),
+            )
+            .filter(RecurringExpense.user_id == user_id)
+            .group_by(func.date_format(RecurringExpense.start_date, "%Y-%m"))
+            .order_by("month")
+            .all()
+        )
+
+        # Convert query result to a list of dictionaries
+        expenses_list = [
+            {
+                "month": expense.month,
+                "recurring_expenses": round(expense.total_amount, 2),
+            }
+            for expense in monthly_expenses
+        ]
+
+        return (
+            jsonify({"list_of_monthly_expenses": expenses_list}),
+            200,
+        )
+
+    except Exception as e:
+        print("Error:", repr(e))
+        return jsonify({"msg": "Internal Server Error"}), 500
+
+
+@app.route("/api/recurring-expenses/<int:expense_id>", methods=["PUT"])
+@jwt_required()
+def update_recurring_expense(expense_id):
+    try:
+        # Check if token has been revoked
+        jti = get_jwt()["jti"]
+        if is_token_revoked(jti):
+            return jsonify({"message": "Session has expired"}), 401
+
+        # Get the user ID from the JWT
+        user_id = get_jwt_identity()
+
+        # Fetch the recurring expense by ID
+        expense = RecurringExpense.query.filter_by(
+            id=expense_id, user_id=user_id
+        ).first()
+
+        # Check if the expense exists
+        if not expense:
+            return jsonify({"message": "Recurring expense not found"}), 404
+
+        # Parse the request body
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "No data provided"}), 400
+
+        # Validate input data
+        required_fields = ["expense_name", "amount", "frequency", "start_date"]
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            return (
+                jsonify({"message": f"Missing fields: {', '.join(missing_fields)}"}),
+                400,
+            )
+
+        # Update the expense fields
+        expense.expense_name = data["expense_name"]
+        expense.amount = data["amount"]
+        expense.frequency = data["frequency"]
+        expense.start_date = datetime.strptime(data["start_date"], "%Y-%m-%d")
+
+        # Commit changes to the database
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "message": "Recurring expense updated successfully",
+                    "data": {
+                        "id": expense.id,
+                        "expense_name": expense.expense_name,
+                        "amount": expense.amount,
+                        "frequency": expense.frequency,
+                        "start_date": expense.start_date.strftime("%Y-%m-%d"),
+                    },
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        print("Error:", repr(e))
+        return jsonify({"message": "Internal Server Error"}), 500
+
+
+@app.route("/api/recurring-expenses/<int:expense_id>", methods=["DELETE"])
+@jwt_required()
+def delete_recurring_expense(expense_id):
+    try:
+        # Check if token has been revoked
+        jti = get_jwt()["jti"]
+        if is_token_revoked(jti):
+            return jsonify({"message": "Session has expired"}), 401
+
+        # Get the user ID from the JWT
+        user_id = get_jwt_identity()
+
+        # Fetch the recurring expense by ID
+        expense = RecurringExpense.query.filter_by(
+            id=expense_id, user_id=user_id
+        ).first()
+
+        # Check if the expense exists
+        if not expense:
+            return jsonify({"message": "Recurring expense not found"}), 404
+
+        # Delete expense from database
+        db.session.delete(expense)
+
+        # Commit changes to the database
+        db.session.commit()
+
+        return (
+            jsonify(
+                {"msg": f"Recurring expense with ID {expense_id} deleted successfully"}
+            ),
+            200,
+        )
+
+    except Exception as e:
+        print("Error:", repr(e))
+        return jsonify({"message": "Internal Server Error"}), 500
 
 
 if __name__ == "__main__":

@@ -11,7 +11,9 @@ class User(db.Model):
     balance = db.Column(db.Float, nullable=False, default=0.0)
 
     alert = db.relationship("Alert", back_populates="user")
+    
     recurring_expense = db.relationship("RecurringExpense", back_populates="user")
+    
     transactions = db.relationship("Transaction", back_populates="user")
 
     # Hash the password

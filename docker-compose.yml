@@ -11,15 +11,18 @@ services:
       - mysql
       - smtp
     environment:
-      
+      FLASK_APP: app.app
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
       MAIL_SERVER: smtp
       MAIL_PORT: 1025
       SQLALCHEMY_DATABASE_URI: mysql+pymysql://root:root@mysql:3306/bankingapp
       PYTHONUNBUFFERED: 1
     volumes:
-      - ./app:/app
+      - .:/app
     networks:
       - finservice_network
+    command: flask run --host=0.0.0.0 --port=3000 --reload
     restart: always
 
   mysql:
