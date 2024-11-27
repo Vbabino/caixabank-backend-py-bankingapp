@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 from app.utils.utils import get_exchange_data, is_token_revoked
 from app.models import *
 
+
 # Create a blueprint
 transfers_bp = Blueprint("transfers", __name__)
 

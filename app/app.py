@@ -1,13 +1,12 @@
-from flask import Flask
-from app.routes.auth_routes import auth_bp
-from app.routes.recurring_expenses_routes import recurring_bp
-from app.routes.transfers_routes import transfers_bp
-
-from app.models import *
-from dotenv import load_dotenv
 import os
+from flask import Flask
+from dotenv import load_dotenv
+from app.routes.transfers_routes import transfers_bp
+from app.routes.savings_goal_alert_routes import alerts_bp
+from app.routes.recurring_expenses_routes import recurring_bp
+from app.routes.auth_routes import auth_bp
 from app.extensions import *
-from app.utils.utils import *
+
 
 load_dotenv()
 
@@ -31,6 +30,7 @@ with app.app_context():
 app.register_blueprint(auth_bp)
 app.register_blueprint(recurring_bp)
 app.register_blueprint(transfers_bp)
+app.register_blueprint(alerts_bp)
 
 
 # Placeholder route for testing

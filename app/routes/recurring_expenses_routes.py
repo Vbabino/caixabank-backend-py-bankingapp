@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from app.utils.utils import is_token_revoked
 from sqlalchemy import func
+from app.extensions import *
 
 from app.models import *
 
