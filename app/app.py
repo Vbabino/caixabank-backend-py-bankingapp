@@ -5,6 +5,7 @@ from app.routes.transfers_routes import transfers_bp
 from app.routes.savings_goal_alert_routes import alerts_bp
 from app.routes.recurring_expenses_routes import recurring_bp
 from app.routes.auth_routes import auth_bp
+from app.routes.transactions_route import transactions_bp
 from app.extensions import *
 
 
@@ -31,6 +32,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(recurring_bp)
 app.register_blueprint(transfers_bp)
 app.register_blueprint(alerts_bp)
+app.register_blueprint(transactions_bp)
 
 
 # Placeholder route for testing
