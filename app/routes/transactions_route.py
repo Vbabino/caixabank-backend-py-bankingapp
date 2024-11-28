@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from app.extensions import db
 from app.models import Transaction, User
-from app.utils.utils import is_token_revoked
+from app.utils.utils import is_token_revoked, balance_drop_alert
 
 transactions_bp = Blueprint("transactions", __name__, url_prefix="/api/transactions")
 
@@ -31,6 +31,10 @@ def add_transaction():
         user = User.query.get(user_id)
         if not user:
             return jsonify({"msg": "User not found."}), 404
+
+        # Check is user has sufficient funds
+        if user.balance < amount:
+            return jsonify({"msg": "Transaction not allowed. Insufficient funds"}), 403
 
         # Convert timestamp to datetime
         timestamp = datetime.fromisoformat(timestamp)
@@ -102,8 +106,17 @@ def add_transaction():
         db.session.add(transaction)
 
         # Update user balance
-        user.balance += amount
+        user.balance -= amount
         db.session.commit()
+
+        # Trigger balance drop alert if applicable
+        if user.alert:
+            for alert in user.alert:
+                if (
+                    alert.balance_drop_threshold is not None
+                    and user.balance <= alert.balance_drop_threshold
+                ):
+                    balance_drop_alert(user, alert)
 
         # Response
         return (
