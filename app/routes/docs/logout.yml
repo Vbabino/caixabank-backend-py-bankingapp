@@ -1,0 +1,21 @@
+tags:
+  - Authentication
+summary: User logout
+description: Endpoint to logout a user by revoking their JWT token.
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+security:
+  - BearerAuth: []  
+responses:
+  200:
+    description: Successfully logged out
+  401:
+    description: Unauthorized - Missing or invalid token
+  500:
+    description: Internal Server Error.

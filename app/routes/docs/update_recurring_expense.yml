@@ -1,0 +1,60 @@
+tags:
+  - Recurring Expenses
+summary: Update Recurring Expense
+description: Endpoint to update the details of an existing recurring expense for the authenticated user.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: path
+    name: expense_id
+    required: true
+    schema:
+      type: integer
+    description: The ID of the recurring expense to update.
+    example: 1
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - expense_name
+        - amount
+        - frequency
+        - start_date
+      properties:
+        expense_name:
+          type: string
+          description: The updated name of the recurring expense.
+          example: "Updated Subscription"
+        amount:
+          type: number
+          description: The updated amount for the recurring expense.
+          example: 25.50
+        frequency:
+          type: string
+          description: The updated frequency of the recurring expense (e.g., weekly, monthly).
+          example: "weekly"
+        start_date:
+          type: string
+          format: date
+          description: The updated start date for the recurring expense in YYYY-MM-DD format.
+          example: "2025-02-01"
+responses:
+  200:
+    description: Recurring expense updated successfully.
+  400:
+    description: Missing fields or invalid input data.
+  401:
+    description: Session expired or unauthorized access.
+  404:
+    description: Recurring expense not found.
+  500:
+    description: Internal Server Error.

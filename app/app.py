@@ -7,6 +7,7 @@ from app.routes.recurring_expenses_routes import recurring_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.transactions_route import transactions_bp
 from app.routes.deposit_route import deposits_bp
+from flasgger import Swagger
 from app.extensions import *
 
 
@@ -17,6 +18,8 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+swagger = Swagger(app, template_file="/app/swagger_template.yml")
+
 
 # Initialize extensions
 db.init_app(app)

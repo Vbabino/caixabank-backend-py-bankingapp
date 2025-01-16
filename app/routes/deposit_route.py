@@ -4,12 +4,15 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from app.extensions import db
 from app.models import Transaction, User
 from app.utils.utils import is_token_revoked, savings_alert
+from flasgger.utils import swag_from
+
 
 deposits_bp = Blueprint("deposits", __name__, url_prefix="/api/deposits")
 
 
 @deposits_bp.route("", methods=["POST"])
 @jwt_required()
+@swag_from("docs/add_deposit.yml")
 def add_deposit():
     try:
         # Check if token has been revoked

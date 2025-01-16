@@ -1,0 +1,51 @@
+tags:
+  - Recurring Expenses
+summary: Add Recurring Expense
+description: Endpoint to create a new recurring expense for the authenticated user.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - expense_name
+        - amount
+        - frequency
+        - start_date
+      properties:
+        expense_name:
+          type: string
+          description: Name of the recurring expense.
+          example: "Netflix Subscription"
+        amount:
+          type: number
+          description: The amount of the recurring expense.
+          example: 15.99
+        frequency:
+          type: string
+          description: Frequency of the recurring expense (e.g., monthly, weekly).
+          example: "monthly"
+        start_date:
+          type: string
+          format: date
+          description: The start date of the recurring expense in YYYY-MM-DD format.
+          example: "2025-01-01"
+responses:
+  201:
+    description: Recurring expense added successfully.
+  400:
+    description: Missing fields or invalid data.
+  401:
+    description: Session has expired or unauthorized access.
+  500:
+    description: Internal Server Error.

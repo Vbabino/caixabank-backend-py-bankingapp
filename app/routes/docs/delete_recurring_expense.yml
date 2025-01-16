@@ -1,0 +1,30 @@
+tags:
+  - Recurring Expenses
+summary: Delete Recurring Expense
+description: Endpoint to delete a recurring expense by its ID for the authenticated user.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: path
+    name: expense_id
+    required: true
+    schema:
+      type: integer
+    description: The ID of the recurring expense to delete.
+    example: 1
+responses:
+  200:
+    description: Recurring expense deleted successfully.
+  401:
+    description: Session expired or unauthorized access.
+  404:
+    description: Recurring expense not found.
+  500:
+    description: Internal Server Error.

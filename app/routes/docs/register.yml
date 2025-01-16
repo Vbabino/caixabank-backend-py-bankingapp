@@ -1,0 +1,35 @@
+tags:
+  - Authentication
+summary: Register User
+description: Endpoint to register a new user by providing their name, email, and password.
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          description: The full name of the user.
+          example: "John Doe"
+        email:
+          type: string
+          description: The email address of the user.
+          
+          example: "johndoe@example.com"
+        password:
+          type: string
+          description: The user's password.
+          example: "securepassword123"
+responses:
+  201:
+    description: User registered successfully.
+  400:
+    description: Missing fields, invalid email, or email already registered.
+  500:
+    description: Internal Server Error.

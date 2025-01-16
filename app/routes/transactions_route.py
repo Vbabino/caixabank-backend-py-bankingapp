@@ -4,12 +4,15 @@ from flask_jwt_extended import get_jwt, jwt_required
 from app.extensions import db
 from app.models import Transaction, User
 from app.utils.utils import is_token_revoked, balance_drop_alert
+from flasgger.utils import swag_from
+
 
 transactions_bp = Blueprint("transactions", __name__, url_prefix="/api/transactions")
 
 
 @transactions_bp.route("", methods=["POST"])
 @jwt_required()
+@swag_from("docs/add_transaction.yml")
 def add_transaction():
     try:
         data = request.get_json()

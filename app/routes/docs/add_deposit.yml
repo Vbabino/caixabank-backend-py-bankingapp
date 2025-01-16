@@ -1,0 +1,40 @@
+tags:
+  - Deposits
+summary: Add Deposit
+description: Endpoint to deposit an amount into the authenticated user's account.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - deposit_amount
+        - password
+      properties:
+        deposit_amount:
+          type: number
+          description: The amount to deposit. Must be greater than 0.
+          example: 100.50
+        password:
+          type: string
+          description: The user's account password for validation.
+          example: "securepassword123"
+responses:
+  200:
+    description: Deposit successfully added to the account balance.
+  400:
+    description: Missing fields, invalid input, or deposit amount less than or equal to 0.
+  401:
+    description: Session expired, unauthorized access, or bad credentials.
+  500:
+    description: Internal Server Error.

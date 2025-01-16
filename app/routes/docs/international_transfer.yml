@@ -1,0 +1,45 @@
+tags:
+  - Transfers
+summary: Simulate International Transfer
+description: Endpoint to simulate an international transfer by converting an amount between two currencies and calculating the associated fee.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - amount
+        - source_currency
+        - target_currency
+      properties:
+        amount:
+          type: number
+          description: The amount to transfer.
+          example: 1000
+        source_currency:
+          type: string
+          description: The source currency code (e.g., USD).
+          example: "USD"
+        target_currency:
+          type: string
+          description: The target currency code (e.g., EUR).
+          example: "EUR"
+responses:
+  200:
+    description: Transfer simulation successful.
+  401:
+    description: Session has expired or unauthorized access.
+  404:
+    description: Invalid currencies or no exchange data available.
+  500:
+    description: Internal Server Error.

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from app.utils.utils import is_token_revoked
 from sqlalchemy import func
+from flasgger.utils import swag_from
 from app.extensions import *
 
 from app.models import *
@@ -9,8 +10,10 @@ from app.models import *
 # Create a blueprint
 recurring_bp = Blueprint("recurring_expenses", __name__)
 
+
 @recurring_bp.route("/api/recurring-expenses", methods=["POST"])
 @jwt_required()
+@swag_from("docs/recurring_expenses.yml")
 def recurring_expenses():
     try:
 
@@ -87,6 +90,7 @@ def recurring_expenses():
 
 @recurring_bp.route("/api/recurring-expenses", methods=["GET"])
 @jwt_required()
+@swag_from("docs/get_recurring_expenses.yml")
 def get_recurring_expenses():
     try:
         # Check if token has been revoked
@@ -125,6 +129,7 @@ def get_recurring_expenses():
 
 @recurring_bp.route("/api/recurring-expenses/projection", methods=["GET"])
 @jwt_required()
+@swag_from("docs/monthly_expenses.yml")
 def monthly_expenses():
     try:
         # Check if token has been revoked
@@ -173,6 +178,7 @@ def monthly_expenses():
 
 @recurring_bp.route("/api/recurring-expenses/<int:expense_id>", methods=["PUT"])
 @jwt_required()
+@swag_from("docs/update_recurring_expense.yml")
 def update_recurring_expense(expense_id):
     try:
         # Check if token has been revoked
@@ -239,6 +245,7 @@ def update_recurring_expense(expense_id):
 
 @recurring_bp.route("/api/recurring-expenses/<int:expense_id>", methods=["DELETE"])
 @jwt_required()
+@swag_from("docs/delete_recurring_expense.yml")
 def delete_recurring_expense(expense_id):
     try:
         # Check if token has been revoked

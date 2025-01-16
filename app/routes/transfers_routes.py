@@ -1,14 +1,19 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from app.utils.utils import get_exchange_data, is_token_revoked
+from flasgger.utils import swag_from
 from app.models import *
 
 
 # Create a blueprint
 transfers_bp = Blueprint("transfers", __name__)
 
-@transfers_bp.route("/api/transfers/fees/<source_currency>/<target_currency>", methods=["GET"])
+
+@transfers_bp.route(
+    "/api/transfers/fees/<source_currency>/<target_currency>", methods=["GET"]
+)
 @jwt_required()
+@swag_from("docs/get_fees.yml")
 def get_fees(source_currency, target_currency):
     try:
         # Check if token has been revoked
@@ -32,8 +37,11 @@ def get_fees(source_currency, target_currency):
         return jsonify({"msg": "Internal Server Error"}), 500
 
 
-@transfers_bp.route("/api/transfers/rates/<source_currency>/<target_currency>", methods=["GET"])
+@transfers_bp.route(
+    "/api/transfers/rates/<source_currency>/<target_currency>", methods=["GET"]
+)
 @jwt_required()
+@swag_from("docs/get_rates.yml")
 def get_rates(source_currency, target_currency):
     try:
         # Check if token has been revoked
@@ -59,6 +67,7 @@ def get_rates(source_currency, target_currency):
 
 @transfers_bp.route("/api/transfers/simulate", methods=["POST"])
 @jwt_required()
+@swag_from("docs/international_transfer.yml")
 def international_transfer():
     data = request.get_json()
     amount = data.get("amount")

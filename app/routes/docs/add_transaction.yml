@@ -1,0 +1,54 @@
+tags:
+  - Transactions
+summary: Add Transaction
+description: Endpoint to add a new transaction for the authenticated user. The transaction is evaluated for fraud detection and may trigger a balance drop alert if applicable.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - user_id
+        - amount
+        - category
+      properties:
+        user_id:
+          type: integer
+          description: The ID of the user making the transaction.
+          example: 1
+        amount:
+          type: number
+          description: The amount of the transaction.
+          example: 250.00
+        category:
+          type: string
+          description: The category of the transaction (e.g., groceries, entertainment).
+          example: "groceries"
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the transaction in ISO 8601 format. Defaults to the current time if not provided.
+          example: "2025-01-15T14:30:00Z"
+responses:
+  201:
+    description: Transaction added and evaluated for fraud.
+  400:
+    description: Missing fields or invalid input data.
+  401:
+    description: Session expired or unauthorized access.
+  403:
+    description: Insufficient funds for the transaction.
+  404:
+    description: User not found.
+  500:
+    description: Internal Server Error.

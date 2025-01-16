@@ -1,0 +1,37 @@
+tags:
+  - Alerts
+summary: Delete Alert
+description: Endpoint to delete a specific alert by its ID for the authenticated user.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - alert_id
+      properties:
+        alert_id:
+          type: integer
+          description: The ID of the alert to delete.
+          example: 1
+responses:
+  200:
+    description: Alert deleted successfully.
+  400:
+    description: Missing alert ID or invalid input.
+  401:
+    description: Session expired or unauthorized access.
+  404:
+    description: Alert not found.
+  500:
+    description: Internal Server Error.

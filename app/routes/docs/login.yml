@@ -1,0 +1,31 @@
+tags:
+  - Authentication
+summary: User Login
+description: Endpoint to authenticate a user and generate a JWT token upon successful login.
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: The email address of the user.
+          example: "johndoe@example.com"
+        password:
+          type: string
+          description: The user's password.
+          example: "securepassword123"
+responses:
+  200:
+    description: User authenticated successfully. JWT token returned.
+  401:
+    description: Bad credentials or missing email/password.
+  400:
+    description: User not found for the provided email.
+  500:
+    description: Internal Server Error.

@@ -2,12 +2,15 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from app.extensions import *
 from app.utils.utils import *
+from flasgger.utils import swag_from
+
 
 # Create a blueprint
 auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/auth/register", methods=["POST"])
+@swag_from("docs/register.yml")
 def register():
     try:
         data = request.get_json()
@@ -57,6 +60,7 @@ def register():
 
 
 @auth_bp.route("/auth/login", methods=["POST"])
+@swag_from("docs/login.yml")
 def login():
     data = request.get_json()
     email = data.get("email")
@@ -86,6 +90,7 @@ def login():
 
 @auth_bp.route("/api/users/logout", methods=["POST"])
 @jwt_required()
+@swag_from("docs/logout.yml")
 def logout():
     jti = get_jwt()["jti"]
     revoked_token = RevokedToken(token=jti)

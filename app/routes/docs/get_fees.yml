@@ -1,0 +1,37 @@
+tags:
+  - Transfers
+summary: Get Transfer Fees
+description: Endpoint to retrieve the fee for transferring between two specified currencies.
+security:
+  - BearerAuth: []
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+    schema:
+      type: string
+    description: JWT token in the format "Bearer <your_token>"
+    example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..
+  - in: path
+    name: source_currency
+    required: true
+    schema:
+      type: string
+    description: The currency code of the source currency (e.g., USD).
+    example: "USD"
+  - in: path
+    name: target_currency
+    required: true
+    schema:
+      type: string
+    description: The currency code of the target currency (e.g., EUR).
+    example: "EUR"
+responses:
+  200:
+    description: Fee retrieved successfully.
+  400:
+    description: No fee information available for the specified currencies.
+  401:
+    description: Session has expired or unauthorized access.
+  500:
+    description: Internal Server Error.

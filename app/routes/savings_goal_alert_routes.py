@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from app.utils.utils import is_token_revoked
 from app.models import User, Alert
+from flasgger.utils import swag_from
 from app.extensions import *
 
 # Create a blueprint
@@ -10,6 +11,7 @@ alerts_bp = Blueprint("alerts", __name__)
 
 @alerts_bp.route("/api/alerts/amount_reached", methods=["POST"])
 @jwt_required()
+@swag_from("docs/saving_goal.yml")
 def saving_goal():
     try:
         data = request.get_json()
@@ -74,6 +76,7 @@ def saving_goal():
 
 @alerts_bp.route("/api/alerts/balance_drop", methods=["POST"])
 @jwt_required()
+@swag_from("docs/balance_drop.yml")
 def balance_drop():
     try:
         data = request.get_json()
@@ -126,6 +129,7 @@ def balance_drop():
 
 @alerts_bp.route("/api/alerts/delete", methods=["DELETE"])
 @jwt_required()
+@swag_from("docs/delete_alert.yml")
 def delete_alert():
     try:
         # Check if token has been revoked
@@ -161,6 +165,7 @@ def delete_alert():
 
 @alerts_bp.route("/api/alerts/list", methods=["GET"])
 @jwt_required()
+@swag_from("docs/get_alert_list.yml")
 def get_alert_list():
     try:
         # Check if token has been revoked
