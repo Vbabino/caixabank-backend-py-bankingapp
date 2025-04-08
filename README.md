@@ -38,6 +38,23 @@ financial_management_app/
 ```
 ## 🎯 Tasks
 
+🔐 Task 1: Manage user login
+
+
+💰 Task 2: Projection of Recurring Expenses
+
+
+🌍 Task 3: Simulation of International Transfers
+
+
+🎯 Task 4: Savings Goal Alert System
+
+
+🔍 Task 5: Find Unusual patterns
+
+
+📧 Task 6: Notify alerts via mail
+
 #### TASK 1: Manage user login
 
 Develop a simple user authentication functionality for the digital financial management platform. This involves implementing secure and efficient mechanisms to register users and manage their login sessions. The authentication system must use JWT (JSON Web Tokens) for session management and ensure that user passwords are securely stored using hashing techniques.
